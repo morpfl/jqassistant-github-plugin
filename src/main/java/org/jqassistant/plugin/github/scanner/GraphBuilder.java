@@ -63,7 +63,7 @@ class GraphBuilder {
 
     private void importPullRequests(GHRepository repository, GitHubRepository gitHubRepository, String branch) {
         List<GitHubPullRequest> pullRequests = new LinkedList<>();
-        for (GHPullRequest ghPullRequest : repository.queryPullRequests().base(branch).list()) {
+        for (GHPullRequest ghPullRequest : repository.queryPullRequests().base(branch).state(GHIssueState.ALL).list()) {
             log.debug("Found pull request: {}", ghPullRequest.getNumber());
             pullRequests.add(cacheEndpoint.findOrCreatePullRequest(ghPullRequest));
         }

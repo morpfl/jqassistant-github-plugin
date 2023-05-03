@@ -6,6 +6,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Label("PullRequest")
 public interface GitHubPullRequest extends GitHubIssue {
@@ -21,4 +22,8 @@ public interface GitHubPullRequest extends GitHubIssue {
     @Relation("HAS_HEAD")
     GitHubCommit getHead();
     void setHead(GitHubCommit head);
+
+    @Relation("HAS_COMMIT")
+    List<GitHubCommit> getCommits();
+    void setCommits(List<GitHubCommit> commits);
 }

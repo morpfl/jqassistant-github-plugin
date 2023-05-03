@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -74,6 +75,15 @@ public class CacheEndpoint {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        try{
+            PagedIterable<GHPullRequestCommitDetail> commitDetails = ghPullRequest.listCommits();
+            List<String> commitShas = commitDetails.toList().stream().map(c -> c.getSha()).collect(Collectors.toList());
+            List<GitHubCommit> commits = commitShas.stream().map(s -> this.descriptorCache.getCommit(s).get()).collect(Collectors.toList());
+            pullRequest.setCommits(commits);
+
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
 
         populateIssueInformation(pullRequest, ghPullRequest);
 
@@ -90,7 +100,6 @@ public class CacheEndpoint {
      */
     public GitHubIssue findOrCreateGitHubIssue(GHIssue ghIssue) {
         Optional<GitHubIssue> optionalIssue = this.descriptorCache.getIssue(ghIssue.getNumber());
-
         return optionalIssue.orElseGet(() -> createGitHubIssue(ghIssue));
     }
 
